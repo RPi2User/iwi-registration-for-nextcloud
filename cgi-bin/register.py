@@ -13,11 +13,23 @@ from iwi_api import getBearerToken, callRESTapi
 
 form = cgi.FieldStorage()
 
+# Hotfix from card/861 hafl1012
 
-user = form.getvalue('user').lower()
-pw = form.getvalue('pw')
-displayname = str(form.getvalue('dn')).strip()
-email = form.getvalue('email')
+user : str
+pw : str
+displayname : str
+email : str
+
+def parseForm(form : cgi.FieldStorage):
+    global user, pw, displayname, email  # use global variables
+    try:
+        user = form.getvalue('user').lower()
+        pw = form.getvalue('pw')
+        displayname = str(form.getvalue('dn')).strip()
+        email = form.getvalue('email')
+    except Exception as e:
+        respond(400, "BadRequest in FormData! Exception: " + str(e))
+        sys.exit(400)
 
 def respond(statusCode, reason):
     data = { 'status': statusCode, 'reason': reason }
@@ -61,6 +73,8 @@ def responseIfUserExistsNextcloud(user_name, auth, url, header):
     url += '/users/' + user_name + '?format=json'
     return requests.request("GET", url, headers=header, auth=auth)
 
+
+parseForm(form)
 
 # Holt Daten von der IWI REST-API
 bearer = getBearerToken(user, pw, IWI_API)
