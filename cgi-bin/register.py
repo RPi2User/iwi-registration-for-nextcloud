@@ -8,6 +8,7 @@ import sys
 import requests
 import hashlib
 from iwi_api import getBearerToken, callRESTapi
+from datetime import datetime
 
 #cgitb.enable(display=0, logdir="/var/log/webauth/")
 
@@ -28,6 +29,10 @@ def parseForm(form : cgi.FieldStorage):
         displayname = str(form.getvalue('dn')).strip()
         email = form.getvalue('email')
     except Exception as e:
+        timestamp = datetime.now().strftime("%Y-%m-%d")
+        log_filename = f"{timestamp}_formError.log"
+        with open(log_filename, "a") as log_file:
+            log_file.write(f"\n\n[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Exception: {str(e)}\n")
         respond(400, "BadRequest in FormData! Exception: " + str(e))
         sys.exit(400)
 
