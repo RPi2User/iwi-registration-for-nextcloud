@@ -32,7 +32,7 @@ def parseForm(form : cgi.FieldStorage):
         timestamp = datetime.now().strftime("%Y-%m-%d")
         log_filename = f"{timestamp}_formError.log"
         with open(log_filename, "a") as log_file:
-            log_file.write(f"\n\n[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Exception: {str(e)}\n")
+            log_file.write(f"\n\n[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Exception with username {user}: {str(e)}\n")
         respond(400, "BadRequest in FormData! Exception: " + str(e))
         sys.exit(400)
 
